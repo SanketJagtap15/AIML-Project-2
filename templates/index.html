@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admission Helper</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 20px;
+            align-items: center;
+        }
+
+        h1 {
+            color: #007bff;
+            text-align: center;
+        }
+
+        #admission-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .user-message,
+        .chatbot-message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+        }
+
+        .user-message {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .chatbot-message {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        #user-input {
+            width: 70%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #send-button {
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        #send-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Welcome to Admission Helper Chatbot!</h1>
+    <div id="admission-container"></div>
+    <input type="text" id="user-input" placeholder="Type your admission-related question..."
+        onkeydown="if(event.keyCode == 13) sendMessage()">
+    <br><br>
+    <button id="send-button" onclick="sendMessage()">Send</button>
+
+    <script>
+        function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+            document.getElementById('user-input').value = '';
+
+            displayMessage(userInput, 'user-message');
+
+            // Replace the URL and method with your backend endpoint and method (POST or GET)
+            fetch('/admission-chat', {
+                method: 'POST', // Change this to 'GET' if your backend handles GET requests
+                headers: {
+                    'Content-Type': 'application/json', // Change this if your backend expects a different content type
+                },
+                body: JSON.stringify({ user_input: userInput }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    displayMessage(data.response, 'chatbot-message');
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function displayMessage(message, sender) {
+            const admissionContainer = document.getElementById('admission-container');
+            const messageElement = document.createElement('div');
+            messageElement.className = sender;
+            messageElement.innerHTML = `<strong>${sender === 'user-message' ? 'You' : 'Chatbot'}:</strong> ${message}`;
+            admissionContainer.appendChild(messageElement);
+
+            // Scroll to the bottom of the chat container
+            admissionContainer.scrollTop = admissionContainer.scrollHeight;
+        }
+    </script>
+</body>
+
+</html>
